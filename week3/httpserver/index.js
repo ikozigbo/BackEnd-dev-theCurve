@@ -2,13 +2,13 @@ const http = require("http");
 const fs = require("fs");
 //const express = require("express");
 
-const port = 3008;
+const port = 3009;
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, {
     "Content-Type": "html",
   });
-  fs.readFile("../../festac/localhost.html", (err, data) => {
+  fs.readFile("../../../festac/localhost.html", (err, data) => {
     res.write(data);
     res.end();
   });
