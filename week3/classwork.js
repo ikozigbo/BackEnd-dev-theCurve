@@ -1,7 +1,9 @@
 randomPercent = () => {
-  let randomnum = Math.random();
-  let percentage = Math.floor(randomnum * 100);
-  return percentage;
+  return new Promise((resolve, reject) => {
+    let randomnum = Math.random();
+    let percentage = Math.floor(randomnum * 100);
+    resolve(percentage);
+  });
 };
 
 average = async (firstname, secondname) => {

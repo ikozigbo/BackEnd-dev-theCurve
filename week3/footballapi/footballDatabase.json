@@ -1,0 +1,42 @@
+[
+  {
+    "1d": 1,
+    "teamName": "Barcelona",
+    "stadium": "Camp Nou",
+    "coach": "Xavi",
+    "teamColor": "red",
+    "ucl": true
+  },
+  {
+    "1d": 2,
+    "teamName": "Real Madrid",
+    "stadium": "Santiago Bernabeu",
+    "coach": "Ancelloti",
+    "teamColor": "white",
+    "ucl": true
+  },
+  {
+    "1d": 3,
+    "teamName": "Athletico Madrid",
+    "stadium": "Metropolitan",
+    "coach": "Diego Simeone",
+    "teamColor": "red",
+    "ucl": true
+  },
+  {
+    "1d": 4,
+    "teamName": "Valencia",
+    "stadium": "Mestalla",
+    "coach": "Ruben Baraja",
+    "teamColor": "black",
+    "ucl": false
+  },
+  {
+    "1d": 5,
+    "teamName": "Sevilla",
+    "stadium": "Ramon Sanchez",
+    "coach": "Jose Luiz",
+    "teamColor": "white",
+    "ucl": false
+  }
+]
