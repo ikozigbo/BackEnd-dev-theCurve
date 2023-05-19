@@ -1,6 +1,6 @@
 [
   {
-    "1d": "1",
+    "id": "1",
     "teamName": "Barcelona",
     "stadium": "Camp Nou",
     "coach": "Xavi",
@@ -8,7 +8,7 @@
     "ucl": true
   },
   {
-    "1d": "2",
+    "id": "2",
     "teamName": "Real Madrid",
     "stadium": "Santiago Bernabeu",
     "coach": "Ancelloti",
@@ -16,7 +16,7 @@
     "ucl": true
   },
   {
-    "1d": "3",
+    "id": "3",
     "teamName": "Athletico Madrid",
     "stadium": "Metropolitan",
     "coach": "Diego Simeone",
@@ -24,7 +24,7 @@
     "ucl": true
   },
   {
-    "1d": "4",
+    "id": "4",
     "teamName": "Valencia",
     "stadium": "Mestalla",
     "coach": "Ruben Baraja",
@@ -32,7 +32,7 @@
     "ucl": false
   },
   {
-    "1d": "5",
+    "id": "5",
     "teamName": "Sevilla",
     "stadium": "Ramon Sanchez",
     "coach": "Jose Luiz",
