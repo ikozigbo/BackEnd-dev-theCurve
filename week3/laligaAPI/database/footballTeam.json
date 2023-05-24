@@ -5,7 +5,7 @@
     "stadium": "Camp Nou",
     "coach": "Xavi",
     "teamColor": "red",
-    "ucl": true
+    "ucl": "true"
   },
   {
     "id": "2",
@@ -13,7 +13,7 @@
     "stadium": "Santiago Bernabeu",
     "coach": "Ancelloti",
     "teamColor": "white",
-    "ucl": true
+    "ucl": "true"
   },
   {
     "id": "3",
@@ -21,7 +21,7 @@
     "stadium": "Metropolitan",
     "coach": "Diego Simeone",
     "teamColor": "red",
-    "ucl": true
+    "ucl": "true"
   },
   {
     "id": "4",
@@ -29,7 +29,7 @@
     "stadium": "Mestalla",
     "coach": "Ruben Baraja",
     "teamColor": "black",
-    "ucl": false
+    "ucl": "false"
   },
   {
     "id": "5",
@@ -37,6 +37,6 @@
     "stadium": "Ramon Sanchez",
     "coach": "Jose Luiz",
     "teamColor": "white",
-    "ucl": false
+    "ucl": "false"
   }
 ]
