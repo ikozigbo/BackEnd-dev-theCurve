@@ -1,0 +1,52 @@
+{
+  "staff": [
+    {
+      "id": 1,
+      "staffName": "ik",
+      "staffAddress": "no 17 a street",
+      "staffSalary": "$100,000",
+      "staffPosition": "intern",
+      "staffGender": "male"
+    },
+    {
+      "id": 2,
+      "staffName": "emma",
+      "staffAddress": "no 16 a street",
+      "staffSalary": "$10,000",
+      "staffPosition": "intern",
+      "staffGender": "male"
+    },
+    {
+      "id": 3,
+      "staffName": "dom",
+      "staffAddress": "no 15 a street",
+      "staffSalary": "$20,000",
+      "staffPosition": "intern",
+      "staffGender": "male"
+    },
+    {
+      "id": 4,
+      "staffName": "faith",
+      "staffAddress": "no 6 a street",
+      "staffSalary": "$10,000",
+      "staffPosition": "intern",
+      "staffGender": "female"
+    },
+    {
+      "id": 5,
+      "staffName": "ik",
+      "staffAddress": "no 17d a street",
+      "staffSalary": "$100,000",
+      "staffPosition": "intern",
+      "staffGender": "male"
+    },
+    {
+      "id": 6,
+      "staffName": "ik",
+      "staffAddress": "no 17d a street",
+      "staffSalary": "$100,000",
+      "staffPosition": "intern",
+      "staffGender": "male"
+    }
+  ]
+}

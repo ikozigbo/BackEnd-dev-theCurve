@@ -42,7 +42,7 @@ const newClub = (newlyCreatedClub) => {
 // update an existing club model
 const updateClub = (id, updatedExistingClub) => {
   return new Promise((resolve, reject) => {
-    const clubIndex = teams.find((item) => item.id === id);
+    const clubIndex = teams.findIndex((item) => item.id === id);
     teams[clubIndex] = { id, ...updatedExistingClub };
     teams.push(teams[clubIndex]);
     fs.writeFileSync(
