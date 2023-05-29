@@ -57,7 +57,7 @@ app.post("/students", async (req, res) => {
     }
   } catch (e) {
     res.status(500).json({
-      message: "error",
+      message: e.message,
     });
   }
 });
@@ -73,10 +73,13 @@ app.get("/students", async (req, res) => {
       res.status(200).json({
         status: "success",
         data: students,
+        size: students.length,
       });
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).json({
+      message: error.message,
+    });
   }
 });
 
