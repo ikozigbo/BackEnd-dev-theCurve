@@ -15,7 +15,7 @@ mongoose
     console.log("Database connected");
   })
   .catch((e) => {
-    console.log(e).message;
+    console.log(e.message);
   });
 
 // create schema for blog
