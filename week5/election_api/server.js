@@ -6,9 +6,7 @@ const app = express();
 app.use(express.json());
 
 mongoose
-  .connect(
-    "mongodb+srv://ikozigbo:dVTsf6VNoXp6uZGX@cluster0.y52blbj.mongodb.net/"
-  )
+  .connect("mongodb://127.0.0.1/electionDB")
   .then(() => {
     console.log("connected to db");
   })
@@ -19,11 +17,16 @@ mongoose
 const electionSchema = mongoose.Schema({
   state: { type: String, required: [true, "state required"], unique: true },
   parties: { type: Array },
-  result: Object,
-  collationOfficer: {
-    type: String,
-    required: [true, "collation officer's name required"],
+  result: {
+    PDP: { type: Number, required: [true, "result required"] },
+    APC: { type: Number, required: [true, "result required"] },
+    LP: { type: Number, required: [true, "result required"] },
+    APGA: { type: Number, required: [true, "result required"] },
   },
+  // collationOfficer: {
+  //   type: String,
+  //   required: [true, "collation officer's name required"],
+  // },
   totalLG: Number,
   totalRegisteredVoters: {
     type: Number,
@@ -67,7 +70,11 @@ const electionSchema = mongoose.Schema({
           maxKey = key;
         }
       }
-      return maxKey;
+      if (this.isRigged == false) {
+        return `${maxKey} with ${maxValue} votes`;
+      } else {
+        return "no party because the election was rigged";
+      }
     },
     required: false,
   },
@@ -177,6 +184,23 @@ app.get("/rigged", async (req, res) => {
   } catch (e) {
     res.status(500).json({
       message: e.message,
+    });
+  }
+});
+
+// to check for winner
+app.get("/winner/:state", async (req, res) => {
+  try {
+    const state = await electionModel.find({ state: req.params.state });
+    const Winner = state[0].winner;
+
+    res.status(200).json({
+      message: `the winner of ${req.params.state} state election is ${Winner}`,
+      statue: `Rigged: ${state[0].isRigged}`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
   }
 });
