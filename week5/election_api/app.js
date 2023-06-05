@@ -17,15 +17,15 @@ const ElectionSchema = mongoose.Schema(
     },
     isRigged: {
       type: Boolean,
-      //   default: () => {
-      //     if (this.totalOccupant < this.totalVotes) {
-      //       return true;
-      //       console.log("true");
-      //     } else {
-      //       return false;
-      //       console.log("false");
-      //     }
-      //   },
+      default: () => {
+        if (this.totalOccupant < this.totalVotes) {
+          return true;
+          console.log("true");
+        } else {
+          return false;
+          console.log("false");
+        }
+      },
     },
   },
   { timeStamp: true }
