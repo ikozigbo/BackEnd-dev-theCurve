@@ -272,6 +272,79 @@ app.delete("/result/:id", async (req, res) => {
   }
 });
 
+//function to iterate through an array of objects and add values with similar key names
+function sumResults(arr) {
+  const result = {};
+
+  for (let obj of arr) {
+    for (let key in obj) {
+      if (typeof obj[key] === "number") {
+        if (result[key]) {
+          result[key] += obj[key];
+        } else {
+          result[key] = obj[key];
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+//function to get the highest value of an object
+function getWinner(obj) {
+  let maxKey = null;
+  let maxValue = -Infinity;
+  for (const [key, value] of Object.entries(obj)) {
+    if (value > maxValue) {
+      maxValue = value;
+      maxKey = key;
+    }
+  }
+  return `The winner of the election is ${maxKey} with ${maxValue} votes`;
+}
+
+//to get overallwinner
+app.get("/overall", async (req, res) => {
+  try {
+    const allValid = await electionModel.find({ isRigged: false });
+    const invalid = await electionModel.find({ isRigged: true });
+    let arrayy = [];
+    allValid.forEach((element) => {
+      arrayy.push(element.result);
+    });
+
+    let result = sumResults(arrayy);
+    let winner = getWinner(result);
+
+    res.status(200).json({
+      electionResult: result,
+      electionWinner: winner,
+      statesWithValidVotes: allValid.length,
+      statesWithInvalideVotes: invalid.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("server is on ", PORT);
 });
+
+// let test = {
+//   hhh: "cncn",
+//   kfi: "kkfk",
+//   kddhs: "kfjjs",
+//   jfjdj: "kkdhd",
+// };
+
+// function testh(obj) {
+//   for (let key in obj) {
+//     console.log(obj[key]);
+//   }
+// }
+
+// testh(test);
