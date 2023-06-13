@@ -156,3 +156,29 @@ app.delete("/student/:id", async (req, res) => {
 app.listen(PORT, () => {
   console.log("server is on ", PORT);
 });
+
+// app.get("/highest", async (req, res) => {
+//   try {
+//     sudents = await studentModel.find();
+//     highest = () => {
+//       let highestScore = -Infinity;
+//       let highestStudent = null;
+//       for (let obj in students) {
+//         for (let key i) {
+//           if (value > highestScore) {
+//             highestScore = value;
+//             highestStudent = this.name;
+//           }
+//         }
+//         return `the highest student is ${highestStudent} with ${highestScore}`;
+//       }
+//     };
+//     res.status(200).json({
+//       data: highest(),
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// });

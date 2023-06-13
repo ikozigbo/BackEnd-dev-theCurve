@@ -348,3 +348,19 @@ app.listen(PORT, () => {
 // }
 
 // testh(test);
+
+// function test(arr) {
+//   result = {};
+//   for (let obj of arr) {
+//     for (let key in obj) {
+//       if (typeof obj[key] === "number") {
+//         if (!result[key]) {
+//           result[key] = obj[key];
+//         } else {
+//           result[key] += obj[key];
+//         }
+//       }
+//     }
+//   }
+//   return result
+// }
