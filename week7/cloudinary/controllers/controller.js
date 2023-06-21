@@ -8,7 +8,7 @@ const myCloud = require("../config/cloudinary");
 //   console.log(req.files);
 
 //   myCloud.uploader.upload(
-//     file[0].path,
+//     file.path,
 //     {
 //       /* additional upload options */
 //     },
@@ -50,11 +50,11 @@ const myCloud = require("../config/cloudinary");
 const newContact = async (req, res) => {
   try {
     const { name, message, email } = req.body;
-    const file = req.files.profilePicture.tempFilePath;
-    console.log(req.files);
-    await myCloud.uploader.upload(file, {}, (err, data) => {
+    const file = req.file;
+    // console.log(req.files);
+    await myCloud.uploader.upload(file.path, (err, data) => {
       if (err) {
-        console.error(err);
+        console.error(err.message);
         return res.status(500).json({ error: "Upload failed" });
       } else {
         const newData = {
@@ -80,5 +80,45 @@ const newContact = async (req, res) => {
     });
   }
 };
+
+// const newContact = async (req, res) => {
+//   try {
+//     const { name, email, message } = req.body;
+//     console.log(req.files);
+//     //const files = req.files;
+//     const cloud = [];
+//     for (const file of req.files) {
+//       await myCloud.uploader.upload(file.path, (err, data) => {
+//         if (err) {
+//           console.log(err.message);
+//         } else {
+//           const variables = {
+//             cloud_id: data.public_id,
+//             cloud_url: data.secure_url,
+//           };
+//           console.log(data);
+//           cloud.push(data);
+//         }
+//       });
+//     }
+//     // console.log(cloud);
+//     contactModel
+//       .create({
+//         name,
+//         email,
+//         message,
+//         profilePicture: cloud,
+//       })
+//       .then((response) => {
+//         res.status(200).json({
+//           data: response,
+//         });
+//       });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
 
 module.exports = { newContact };
