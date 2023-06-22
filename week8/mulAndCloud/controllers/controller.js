@@ -8,8 +8,8 @@ const createProfile = async (req, res) => {
     console.log(req.file);
     const { personName, personPhone } = req.body;
     const result = await cloudinary.uploader.upload(req.file.path);
-
-    const newPerson = new personModel({
+    // console.log(result);
+    const newPerson = personModel({
       personName,
       personPhone,
       personProfile: result.secure_url,
@@ -77,26 +77,34 @@ const getProfile = async (req, res) => {
 // update profile
 const updateProfile = async (req, res) => {
   try {
-    const profile = await profileModel.findById(req.params.id);
+    const profile = await personModel.findById(req.params.id);
     if (profile) {
+      let result = null;
       // Delete the existing image from local upload folder and Cloudinary
-      if (profile.profileImage) {
-        const publicId = profile.profileImage.split("/").pop().split(".")[0];
+      if (req.file) {
+        const publicId = profile.personProfile.split("/").pop().split(".")[0];
         await cloudinary.uploader.destroy(publicId);
+        result = await cloudinary.uploader.upload(req.file.path);
+        // Delete file from local upload folder
+        fs.unlinkSync(req.file.path);
       }
 
       // Upload the new image to Cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path);
 
       // Update the profile data in MongoDB
-      profile.profileName = req.body.profileName;
-      profile.profilePhone = req.body.profilePhone;
-      profile.profileProfileImage = result.secure_url;
+      // profile.profileName = req.body.profileName;
+      // profile.profilePhone = req.body.profilePhone;
+      // profile.profileProfileImage = result.secure_url;
+      profile.set({
+        personName: req.body.personName || profile.personName,
+        personPhone: req.body.personPhone || profile.personPhone,
+        personProfile: !result ? profile.personProfile : result.secure_url,
+      });
       await profile.save();
-      // Delete file from local upload folder
-      fs.unlinkSync(req.file.path);
 
-      res.json({ message: "profile updated successfully", data: profile });
+      const updated = await personModel.findById(req.params.id);
+
+      res.json({ message: "profile updated successfully", data: updated });
     } else {
       res.status(404).json({ error: "profile not found" });
     }

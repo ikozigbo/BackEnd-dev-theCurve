@@ -8,7 +8,10 @@ const {
   updateProfile,
   deleteProfile,
 } = require("./controllers/controller");
-const validatePerson = require("./middleware/personValidate");
+const {
+  validatePerson,
+  updateValidation,
+} = require("./middleware/personValidate");
 
 router.post(
   "/create",
@@ -18,7 +21,12 @@ router.post(
 );
 router.get("/profiles", getProfiles);
 router.get("/profiles/:id", getProfile);
-router.put("/profiles/:id", upload.single("profileImage"), updateProfile);
+router.put(
+  "/profiles/:id",
+  upload.single("personProfile"),
+  updateValidation,
+  updateProfile
+);
 router.delete("/profiles/:id", upload.single("profileImage"), deleteProfile);
 
 module.exports = router;
