@@ -18,7 +18,7 @@ const validatePerson = (req, res, next) => {
     personPhone: Joi.string()
       .pattern(/^[0-9]{11}$/)
       .required(),
-    personProfile: Joi.string().required(),
+    //personProfile: Joi.string().required(),
   });
   const { error } = schema.validate(req.body);
   if (error) {

@@ -12,8 +12,8 @@ const validatePerson = require("./middleware/personValidate");
 
 router.post(
   "/create",
-  validatePerson,
   upload.single("personProfile"),
+  validatePerson,
   createProfile
 );
 router.get("/profiles", getProfiles);

@@ -5,6 +5,7 @@ const fs = require("fs");
 
 const createProfile = async (req, res) => {
   try {
+    console.log(req.file);
     const { personName, personPhone } = req.body;
     const result = await cloudinary.uploader.upload(req.file.path);
 
