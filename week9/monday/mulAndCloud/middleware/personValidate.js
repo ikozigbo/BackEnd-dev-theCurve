@@ -14,11 +14,13 @@ const Joi = require("@hapi/joi");
 
 const validatePerson = (req, res, next) => {
   const schema = Joi.object({
-    Name: Joi.string().required(),
-    personNumber: Joi.number()
-      .pattern(/^[0-9]{11}$/)
+    Name: Joi.string()
+      .regex(/^(?![0-9]+$).*$/)
       .required(),
-    //personProfile: Joi.string().required(),
+    personNumber: Joi.number()
+      //.required()
+      .pattern(/^[0-9]{11}$/),
+    // profilePicture: Joi.string().required(),
   });
   const { error } = schema.validate(req.body);
   if (error) {

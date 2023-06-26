@@ -5,16 +5,15 @@ const fs = require("fs");
 
 const createProfile = async (req, res) => {
   try {
-    console.log(req.file);
-    const { personName, personPhone } = req.body;
-    const result = await cloudinary.uploader.upload(req.file.path);
-    console.log(result);
+    //console.log(req.file);
+    const { Name, personNumber } = req.body;
+
     const newPerson = personModel({
-      personName,
-      personPhone,
-      personProfile: result.secure_url,
+      Name,
+      personNumber,
+      profilePicture: req.file.path,
     });
-    fs.unlinkSync(req.file.path);
+
     const savePerson = await newPerson.save();
     if (newPerson) {
       res.status(200).json({
@@ -83,7 +82,7 @@ const updateProfile = async (req, res) => {
       // Delete the existing image from local upload folder and Cloudinary
       if (req.file) {
         const publicId = profile.personProfile.split("/").pop().split(".")[0];
-        console.log(publicId)
+        console.log(publicId);
         await cloudinary.uploader.destroy(publicId);
         result = await cloudinary.uploader.upload(req.file.path);
         // Delete file from local upload folder
