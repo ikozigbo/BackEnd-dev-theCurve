@@ -27,12 +27,12 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  req.session.isAuth = true;
-  console.log(req.sessionID);
-  console.log(req.session);
-  res.send("hello");
-});
+// app.get("/", (req, res) => {
+//   req.session.isAuth = true;
+//   console.log(req.sessionID);
+//   console.log(req.session);
+//   res.send("hello");
+// });
 //app.use(express.urlencoded({ extended: true }));
 //app.use("/uploads", express.static(__dirname + "/uploads"));
 
