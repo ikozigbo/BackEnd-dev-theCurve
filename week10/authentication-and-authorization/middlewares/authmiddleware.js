@@ -1,14 +1,53 @@
-const jwt = require("jsonwebtoken");
-
 // auth middleware
+
 const userAuth = async (req, res, next) => {
-  const hasAuth = req.headers.authorization;
-  if (hasAuth) {
-    const token = hasAuth.split(" ")[1];
-    const decoded = jwt.verify(token, pr);
-  } else {
-    res.status(404).json({
-      message: "Authorization token not found",
+  try {
+    console.log(req.session);
+    if (req.session.isAuth) {
+      //console.log(req.session.user);
+      next();
+    } else {
+      res.status(403).json({
+        message: "please login",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
   }
 };
+
+const isAdmin = async (req, res, next) => {
+  try {
+    if (req.session.user.isAdmin) {
+      next();
+    } else {
+      res.status(403).json({
+        message: "you are not an admin",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const isSuperAdmin = async (req, res, next) => {
+  try {
+    if (req.session.user.isSuperAdmin) {
+      next();
+    } else {
+      res.status(403).json({
+        message: "you are not a super admin",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { userAuth, isAdmin, isSuperAdmin };
