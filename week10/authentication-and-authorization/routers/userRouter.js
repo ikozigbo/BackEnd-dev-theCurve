@@ -5,6 +5,8 @@ const {
   signin,
   logout,
   getAll,
+  forgotPassword,
+  resetpassword,
 } = require("../controller/userController");
 const {
   isAdmin,
@@ -18,4 +20,6 @@ router.put("/verify/:id", userVerify);
 router.post("/signin", signin);
 router.get("/logout", logout);
 router.get("/getall", userAuth, isAdmin, getAll);
+router.get("/forgot-password", forgotPassword);
+router.put("/reset-password", resetpassword);
 module.exports = router;

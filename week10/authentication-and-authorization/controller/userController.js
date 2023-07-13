@@ -97,6 +97,62 @@ const getAll = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    //create a link with the reset password link and send it to email
+    const user = await User.findOne({ email });
+    if (user) {
+      const subject = "forgotten password";
+      // for better security practice a unique token should be sent to reset password instead of user._id
+      const link = `${req.protocol}://${req.get("host")}/api/reset-password/${
+        user._id
+      }`;
+      const message = `click the ${link} to reset your password`;
+      const data = {
+        email: email,
+        subject,
+        message,
+      };
+      sendEmail(data);
+      res.status(200).json({
+        message: "Check your registered email for your password reset link",
+      });
+    } else {
+      res.status(404).json({
+        message: "user not found",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const resetpassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newpassword } = req.body;
+    const salt = bcryptjs.genSaltSync(10);
+    const hashedPassword = bcryptjs.hashSync(newpassword, salt);
+    const user = await User.findByIdAndUpdate(id, { password: hashedPassword });
+    if (user) {
+      res.status(200).json({
+        message: "password succesfully reset",
+      });
+    } else {
+      res.status(500).json({
+        message: "error changing password",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 const logout = async (req, res) => {
   try {
     req.session.destroy((err) => {
@@ -110,4 +166,12 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { newUser, signin, userVerify, logout, getAll };
+module.exports = {
+  newUser,
+  signin,
+  userVerify,
+  logout,
+  getAll,
+  forgotPassword,
+  resetpassword,
+};
