@@ -2,6 +2,7 @@ const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const { sendEmail } = require("./emailController");
+const { genToken, decodeToken } = require("../utilities/jwt");
 
 const newUser = async (req, res) => {
   try {
@@ -19,10 +20,9 @@ const newUser = async (req, res) => {
         email: email.toLowerCase(),
         password: hash,
       });
+      const token = await genToken(user._id, "30m");
       const subject = "New User";
-      const link = `${req.protocol}://${req.get("host")}/api/verify/${
-        user._id
-      }`;
+      const link = `${req.protocol}://${req.get("host")}/api/verify/${token}`;
       const message = `welcome onboard kindly use this ${link} to verify your account`;
       const data = {
         email: email,
@@ -44,15 +44,15 @@ const newUser = async (req, res) => {
 
 const userVerify = async (req, res) => {
   try {
-    const { id } = req.params;
-    console.log(id);
-    const verified = await User.findByIdAndUpdate(id, { isVerified: true });
-    if (!verified) {
-      res.json("unable to verify account");
-    } else {
-      res.status(200).json({
-        message: "user verified",
-      });
+    const { token } = req.params;
+    //console.log(token);
+    //console.log(id);
+    const userInfo = await decodeToken(token);
+    console.log(userInfo);
+    //const tokens = await jwt.verify(token, process.env.JWT_SECRET);
+    if (userInfo) {
+      await User.findByIdAndUpdate(userInfo._id, { isVerified: true });
+      res.status(200).json({ message: "user verified" });
     }
   } catch (error) {
     res.status(500).json({
@@ -73,6 +73,20 @@ const signin = async (req, res) => {
     if (!user || !checkPassword) {
       res.status(404).json({
         message: "invalid credentials",
+      });
+    } else if (!user.isVerified) {
+      const token = await genToken(user._id, "30m");
+      const subject = "verify now";
+      const link = `${req.protocol}://${req.get("host")}/api/verify/${token}`;
+      const message = ` kindly use this ${link} to verify your account`;
+      const data = {
+        email: email,
+        subject,
+        message,
+      };
+      sendEmail(data);
+      res.status(401).json({
+        message: "you are not verified check your email to verify",
       });
     } else {
       req.session.isAuth = true;

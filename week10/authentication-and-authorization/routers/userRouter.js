@@ -16,7 +16,7 @@ const {
 const router = express.Router();
 
 router.post("/signup", newUser);
-router.put("/verify/:id", userVerify);
+router.put("/verify/:token", userVerify);
 router.post("/signin", signin);
 router.get("/logout", logout);
 router.get("/getall", userAuth, isAdmin, getAll);
