@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const recordSchema = new mongoose.Schema(
   {
-    userid: { type: mongoose.Types.ObjectId, required: true },
+    userid: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
     math: {
       type: Number,
       required: [true, "Score is required"],
@@ -15,5 +15,5 @@ const recordSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const recordModel = mongoose.model("record", recordSchema);
+const recordModel = mongoose.model("Record", recordSchema);
 module.exports = recordModel;

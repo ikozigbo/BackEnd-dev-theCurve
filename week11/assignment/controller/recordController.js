@@ -1,11 +1,14 @@
-const Record = require("../models/recordModel");
+const Record = require("../model/recordModel");
+const User = require("../model/userModel");
 
 const createRecord = async (req, res) => {
   try {
     const { math, english, userid } = req.body;
     const alreadyExistsUserRecord = await Record.findOne({ userid: userid });
-    if (!alreadyExistsUserRecord) {
+    const user = await User.findById(userid);
+    if (!alreadyExistsUserRecord && user) {
       const record = new Record({
+        userid,
         math,
         english,
       });
@@ -15,7 +18,8 @@ const createRecord = async (req, res) => {
       });
     } else {
       res.status(401).json({
-        message: "You have already created a record for this user",
+        message:
+          "You have already created a record for this user or no such user",
       });
     }
   } catch (error) {
@@ -88,10 +92,25 @@ const deleteRecord = async (req, res) => {
   }
 };
 
+const getAllLoggedInRecords = async (req, res) => {
+  try {
+    const record = await Record.find().populate("userid");
+    const loggedInRecords = record.filter(
+      (record) => record.userid.isloggedin == true
+    );
+    res.status(200).json({ loggedInRecords });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createRecord,
   getRecords,
   getRecord,
+  getAllLoggedInRecords,
   updateRecord,
   deleteRecord,
 };
