@@ -19,5 +19,5 @@ router.get("/logout", logout);
 router.get("/getall", userAuth, isAdmin, getAll);
 router.get("/forgot-password", forgotPassword);
 router.get("/resend-email-verification", resendEmailVerification);
-router.put("/reset-password/:id", resetpassword);
+router.put("/reset-password/:token", resetpassword);
 module.exports = router;

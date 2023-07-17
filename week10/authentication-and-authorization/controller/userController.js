@@ -118,10 +118,11 @@ const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (user) {
       const subject = "forgotten password";
+      const token = await genToken(user._id, "1m");
       // for better security practice a unique token should be sent to reset password instead of user._id
-      const link = `${req.protocol}://${req.get("host")}/api/reset-password/${
-        user._id
-      }`;
+      const link = `${req.protocol}://${req.get(
+        "host"
+      )}/api/reset-password/${token}`;
       const message = `click the ${link} to reset your password`;
       const data = {
         email: email,
@@ -146,11 +147,14 @@ const forgotPassword = async (req, res) => {
 
 const resetpassword = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { token } = req.params;
     const { newpassword } = req.body;
+    const userInfo = await decodeToken(token);
     const salt = bcryptjs.genSaltSync(10);
     const hashedPassword = bcryptjs.hashSync(newpassword, salt);
-    const user = await User.findByIdAndUpdate(id, { password: hashedPassword });
+    const user = await User.findByIdAndUpdate(userInfo._id, {
+      password: hashedPassword,
+    });
     if (user) {
       res.status(200).json({
         message: "password succesfully reset",

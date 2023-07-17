@@ -94,9 +94,9 @@ const deleteRecord = async (req, res) => {
 
 const getAllLoggedInRecords = async (req, res) => {
   try {
-    const record = await Record.find().populate("userid");
-    const loggedInRecords = record.filter(
-      (record) => record.userid.isloggedin == true
+    const records = await Record.find().populate("userid");
+    const loggedInRecords = records.filter(
+      (element) => element.userid.isloggedin == true
     );
     res.status(200).json({ loggedInRecords });
   } catch (error) {
