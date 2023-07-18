@@ -16,7 +16,7 @@ mongoose
     console.log(e).message;
   });
 
-//create model
+//create schema
 const studentSchema = mongoose.Schema({
   studentName: { type: String, required: [true, "student name is required"] },
   studentCourse: {
