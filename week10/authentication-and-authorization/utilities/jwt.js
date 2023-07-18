@@ -16,7 +16,7 @@ const genToken = async (id, time) => {
 
 const decodeToken = async (token) => {
   let user = null;
-  await jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
+  jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
     if (err) {
       throw err;
     } else {

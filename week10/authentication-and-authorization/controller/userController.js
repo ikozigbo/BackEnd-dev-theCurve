@@ -144,7 +144,7 @@ const forgotPassword = async (req, res) => {
     });
   }
 };
-
+//reset password
 const resetpassword = async (req, res) => {
   try {
     const { token } = req.params;
