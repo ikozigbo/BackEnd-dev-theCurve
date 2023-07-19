@@ -9,9 +9,11 @@ const {
   resetpassword,
   resendEmailVerification,
   updateUser,
+} = require("../controller/userController");
+const {
   upgradeUserToAdmin,
   upgradeUserToSuperAdmin,
-} = require("../controller/userController");
+} = require("../controller/adminController");
 const {
   isAdmin,
   userAuth,
