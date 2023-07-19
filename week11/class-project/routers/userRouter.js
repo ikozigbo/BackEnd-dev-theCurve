@@ -9,10 +9,12 @@ const {
   resetpassword,
   resendEmailVerification,
   updateUser,
+  deleteUser,
 } = require("../controller/userController");
 const {
   upgradeUserToAdmin,
   upgradeUserToSuperAdmin,
+  signupAdmin,
 } = require("../controller/adminController");
 const {
   isAdmin,
@@ -22,11 +24,13 @@ const {
 const router = express.Router();
 
 router.post("/signup", newUser);
+router.post("/signup-admin", signupAdmin);
 router.put("/verify/:token", userVerify);
 router.post("/signin", signin);
 router.get("/logout", logout);
 router.get("/getall", userAuth, getAll);
 router.put("/update-user/:userId", userAuth, updateUser);
+router.delete("/delete-user/:userId", userAuth, deleteUser);
 router.put("/upgrade-to-admin/:userId", userAuth, isAdmin, upgradeUserToAdmin);
 router.put(
   "/upgrade-to-superadmin/:userId",
