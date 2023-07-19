@@ -302,7 +302,6 @@ module.exports = {
   getOne,
   updateUser,
   deleteUser,
-
   forgotPassword,
   resetpassword,
   resendEmailVerification,
