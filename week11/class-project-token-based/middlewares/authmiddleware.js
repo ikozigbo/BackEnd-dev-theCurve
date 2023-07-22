@@ -42,7 +42,6 @@ const isAdmin = async (req, res, next) => {
 
 const isSuperAdmin = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
     if (req.user.isSuperAdmin) {
       next();
     } else {
