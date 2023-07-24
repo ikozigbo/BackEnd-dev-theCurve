@@ -8,6 +8,7 @@ const newUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const isEmail = await User.findOne({ email });
+    j;
     if (isEmail) {
       res.status(400).json({
         message: "email already registerd",
