@@ -6,7 +6,7 @@ const { genToken, decodeToken } = require("../utilities/jwt");
 
 const newUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const isEmail = await User.findOne({ email });
     if (isEmail) {
       res.status(400).json({
@@ -16,7 +16,8 @@ const newUser = async (req, res) => {
       const salt = bcryptjs.genSaltSync(10);
       const hash = bcryptjs.hashSync(password, salt);
       const user = await User.create({
-        username,
+        firstName,
+        lastName,
         email: email.toLowerCase(),
         password: hash,
       });
@@ -31,7 +32,7 @@ const newUser = async (req, res) => {
         subject,
         message,
       };
-      //sendEmail(data);
+      sendEmail(data);
       res.status(200).json({
         success: true,
         user,
@@ -109,9 +110,11 @@ const signin = async (req, res) => {
       checkPassword = bcryptjs.compareSync(password, user.password);
     }
     if (!user || !checkPassword) {
-      res.status(404).json({
+      res.status(400).json({
         message: "invalid credentials",
       });
+    } else if (user.isBlocked) {
+      res.status(200).json({ message: "This user is blocked" });
     } else if (!user.isVerified) {
       const token = await genToken(user._id, "30m");
       const subject = "verify now";

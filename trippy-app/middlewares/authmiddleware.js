@@ -40,16 +40,4 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-const isSuperAdmin = async (req, res, next) => {
-  try {
-    if (req.user.isSuperAdmin) {
-      next();
-    } else {
-      res.status(401).json({ message: "not a super admin" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-module.exports = { userAuth, isAdmin, isSuperAdmin };
+module.exports = { userAuth, isAdmin };
