@@ -141,7 +141,7 @@ const signin = async (req, res) => {
       });
     } else {
       user.isloggedin = true;
-      const token = await genToken(user._id, "1h");
+      const token = await genToken(user._id, "1d");
       await user.save();
 
       res.status(200).json({ token, user });
