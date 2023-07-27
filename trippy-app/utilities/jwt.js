@@ -20,7 +20,9 @@ const decodeToken = async (token) => {
     if (err) {
       throw err;
     } else {
+      //console.log(data);
       user = await User.findById(data.userID);
+      // console.log(user);
     }
   });
   return user;

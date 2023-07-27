@@ -54,7 +54,7 @@ const newUser = async (req, res) => {
 const userVerify = async (req, res) => {
   try {
     const { token } = req.params;
-    //console.log(token);
+    console.log(token);
     //console.log(id);
     const userInfo = await decodeToken(token);
     console.log(userInfo);
@@ -62,6 +62,8 @@ const userVerify = async (req, res) => {
     if (userInfo) {
       await User.findByIdAndUpdate(userInfo._id, { isVerified: true });
       res.status(200).json({ message: "user verified" });
+    } else {
+      throw new Error("error verifying user, try again");
     }
   } catch (error) {
     res.status(500).json({
@@ -202,6 +204,10 @@ const updateUserName = async (req, res) => {
     });
   }
 };
+
+//add profile picture
+
+//update profile piicture
 
 const deleteUser = async (req, res) => {
   try {
