@@ -11,7 +11,7 @@ const userAuth = async (req, res, next) => {
 
       const user = await decodeToken(token);
       req.user = user;
-      if (req.user.isloggedin) {
+      if (req.user?.isloggedin) {
         next();
       } else {
         res.status(401).json({
