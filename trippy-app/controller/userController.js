@@ -1,8 +1,10 @@
 const User = require("../model/userModel");
+const cloudinary = require("../utilities/cloudinary");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 const { sendEmail } = require("../middlewares/sendEmail");
 const { genToken, decodeToken } = require("../utilities/jwt");
+const fs = require("fs");
 
 const newUser = async (req, res) => {
   try {
@@ -206,6 +208,47 @@ const updateUserName = async (req, res) => {
 };
 
 //add profile picture
+// update profile
+const addProfilePicture = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const profile = await User.findById(userId);
+    if (profile) {
+      console.log(req.file);
+      let result = null;
+      // Delete the existing image from local upload folder and Cloudinary
+      if (req.file) {
+        if (profile.profilePicture) {
+          const publicId = profile.profilePicture
+            .split("/")
+            .pop()
+            .split(".")[0];
+          console.log(publicId);
+          await cloudinary.uploader.destroy(publicId);
+        }
+        result = await cloudinary.uploader.upload(req.file.path);
+        // Delete file from local upload folder
+        fs.unlinkSync(req.file.path);
+        profile.set({
+          profilePicture: result.secure_url,
+        });
+        await profile.save();
+
+        const updated = await User.findById(userId);
+
+        res.json({ message: "profile updated successfully", data: updated });
+      } else {
+        res.status(400).json({ error: "no profile picture added" });
+      }
+    } else {
+      res.status(404).json({ error: "profile not found" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 //update profile piicture
 
@@ -317,6 +360,7 @@ module.exports = {
   getAll,
   getOne,
   updateUserName,
+  addProfilePicture,
   deleteUser,
   forgotPassword,
   resetpassword,
