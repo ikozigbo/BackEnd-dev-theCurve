@@ -5,6 +5,7 @@ const bcryptjs = require("bcryptjs");
 const { sendEmail } = require("../middlewares/sendEmail");
 const { genToken, decodeToken } = require("../utilities/jwt");
 const fs = require("fs");
+const { generateDynamicEmail } = require("../utilities/emailTemplate");
 
 const newUser = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ const newUser = async (req, res) => {
     const isEmail = await User.findOne({ email });
     if (password === confirmPassword) {
       if (isEmail) {
-        res.status(400).json({
+        res.status(409).json({
           message: "email already registerd",
         });
       } else {
@@ -26,17 +27,16 @@ const newUser = async (req, res) => {
         });
         const token = await genToken(user._id, "30m");
         const subject = "New User";
-        const link = `${req.protocol}://${req.get(
-          "host"
-        )}/trippy/verify/${token}`;
-        const message = `welcome onboard kindly use this ${link} to verify your account`;
+        const link = `http://localhost:5173/verify?token=${token}`;
+        // const message = `welcome onboard kindly use this ${link} to verify your account`;
+        const html = await generateDynamicEmail(link);
         const data = {
           email: email,
           subject,
-          message,
+          html,
         };
         sendEmail(data);
-        res.status(200).json({
+        res.status(201).json({
           success: true,
           user,
         });
@@ -158,7 +158,7 @@ const signin = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const users = await User.find();
-    res.json({ users });
+    res.status(200).json({ users });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -170,7 +170,7 @@ const getOne = async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
-    res.json({ user });
+    res.status(200).json({ user });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -210,33 +210,37 @@ const updateUserName = async (req, res) => {
 //add profile picture
 // update profile
 const addProfilePicture = async (req, res) => {
-  const { userId } = req.body;
   try {
-    const profile = await User.findById(userId);
+    const profile = await User.findById(req.user._id);
     if (profile) {
-      console.log(req.file);
+      //console.log(req.files);
+
       let result = null;
       // Delete the existing image from local upload folder and Cloudinary
-      if (req.file) {
+      if (req.files) {
         if (profile.profilePicture) {
           const publicId = profile.profilePicture
             .split("/")
             .pop()
             .split(".")[0];
-          console.log(publicId);
+          //console.log(publicId);
           await cloudinary.uploader.destroy(publicId);
         }
-        result = await cloudinary.uploader.upload(req.file.path);
+        result = await cloudinary.uploader.upload(
+          req.files.profilePicture.tempFilePath
+        );
         // Delete file from local upload folder
-        fs.unlinkSync(req.file.path);
+        //fs.unlinkSync(req.file.path);
         profile.set({
           profilePicture: result.secure_url,
         });
         await profile.save();
 
-        const updated = await User.findById(userId);
+        const updated = await User.findById(req.user._id);
 
-        res.json({ message: "profile updated successfully", data: updated });
+        res
+          .status(200)
+          .json({ message: "profile updated successfully", data: updated });
       } else {
         res.status(400).json({ error: "no profile picture added" });
       }

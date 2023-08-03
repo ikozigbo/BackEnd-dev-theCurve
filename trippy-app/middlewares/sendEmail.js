@@ -26,7 +26,8 @@ const sendEmail = async (options) => {
       from: process.env.MAIL_ID,
       to: options.email,
       subject: options.subject,
-      text: options.message,
+      //text: options.message,
+      html: options.html,
     });
 
     console.log("Message sent: %s", info.messageId);
