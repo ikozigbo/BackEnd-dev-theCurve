@@ -63,6 +63,7 @@ const createHotel = async (req, res) => {
 const searchHotels = async (req, res) => {
   try {
     // Copy the original req.query object to avoid modifying it directly
+    console.log(req.query)
     const queryObj = { ...req.query };
 
     // Define an array of allowed fields
@@ -93,7 +94,10 @@ const searchHotels = async (req, res) => {
 const findHotelById = async (req, res) => {
   try {
     const { id } = req.params;
-    const hotel = await Hotel.findById(id);
+    const hotel = await Hotel.findById(id).populate("ratings.postedBy", [
+      "firstName",
+      "lastName",
+    ]);
     res.status(200).json({
       success: true,
       hotel,
@@ -196,10 +200,124 @@ const deleteHotelById = async (req, res) => {
   }
 };
 
+// "ratings.$.star": This is the path to the field that we want to update.
+// In this case, it refers to the star field within an array element called ratings.
+// The $ symbol is a positional operator that represents the matched array element position for the update operation.
+
+const hotelRating = async (req, res) => {
+  const { _id } = req.user;
+  const { star, comment } = req.body;
+  const { hotelId } = req.params;
+  try {
+    const hotel = await Hotel.findById(hotelId);
+    let alreadyRated = hotel.ratings.find(
+      (obj) => obj.postedBy?.toString() === _id.toString()
+    );
+    if (alreadyRated) {
+      const updateRating = await Hotel.updateOne(
+        {
+          ratings: {
+            $elemMatch: alreadyRated,
+          },
+        },
+        {
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
+        },
+        { new: true }
+      );
+      // res.json(updateRating);
+    } else {
+      const ratedHotel = await Hotel.findByIdAndUpdate(
+        hotelId,
+        {
+          $push: {
+            ratings: {
+              star: star,
+              comment: comment,
+              postedBy: _id,
+            },
+          },
+        },
+        { new: true }
+      );
+      // res.json(ratedProduct);
+    }
+    ////the next line of code is to calculate the average star rating
+    const ratedHotel = await Hotel.findById(hotelId);
+    //console.log(productWithRatings.ratings);
+    let totalRatings = ratedHotel.ratings.length;
+    let sumOfStars = ratedHotel.ratings
+      .map((rating) => rating.star)
+      .reduce((prev, curr) => prev + curr, 0);
+    let starRating = Math.round(sumOfStars / totalRatings);
+    const finalUpdate = await Hotel.findByIdAndUpdate(
+      hotelId,
+      {
+        starRating,
+      },
+      { new: true }
+    ).populate("ratings.postedBy", ["firstName", "lastName"]);
+    res.status(200).json(finalUpdate);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const deleteHotelRating = async (req, res) => {
+  const { _id } = req.user;
+  const { hotelId } = req.params;
+  try {
+    const hotel = await Hotel.findById(hotelId);
+    let alreadyRated = hotel.ratings.find(
+      (obj) => obj.postedBy.toString() === _id.toString()
+    );
+    if (alreadyRated) {
+      const updatedHotel = await Hotel.findByIdAndUpdate(
+        hotelId,
+        {
+          $pull: {
+            ratings: {
+              postedBy: _id,
+            },
+          },
+        },
+        { new: true }
+      );
+      // Recalculate the star rating after removing the rating
+      let totalRatings = updatedHotel.ratings.length;
+      let sumOfStars = updatedHotel.ratings
+        .map((rating) => rating.star)
+        .reduce((prev, curr) => prev + curr, 0);
+      starRating = totalRatings > 0 ? Math.round(sumOfStars / totalRatings) : 0;
+      console.log(starRating);
+      const finalupdatedHotel = await Hotel.findByIdAndUpdate(
+        hotelId,
+        {
+          starRating,
+        },
+        { new: true }
+      ).populate("ratings.postedBy", ["firstName", "lastName"]);
+      res.status(200).json(finalupdatedHotel);
+    } else {
+      res.status(404).json({
+        message: "Rating not found for this hotel and user.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createHotel,
   searchHotels,
   findHotelById,
   updateHotelById,
   deleteHotelById,
+  hotelRating,
+  deleteHotelRating,
 };

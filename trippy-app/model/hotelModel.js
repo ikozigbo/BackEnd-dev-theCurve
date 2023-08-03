@@ -5,14 +5,17 @@ const hotelSchema = new mongoose.Schema(
     hotelName: {
       type: String,
       required: [true, "Hotel name is required."],
+      lowercase: true,
     },
     city: {
       type: String,
       required: [true, "city is required."],
+      lowercase: true,
     },
     country: {
       type: String,
       required: [true, "country is required."],
+      lowercase: true,
     },
     address: {
       type: String,

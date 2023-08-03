@@ -5,15 +5,18 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: [true, "firstname is required"],
+      lowercase: true,
     },
     lastName: {
       type: String,
       required: [true, "lastname is required"],
+      lowercase: true,
     },
     email: {
       type: String,
       required: [true, "email is required"],
       unique: true,
+      lowercase: true,
     },
     profilePicture: {
       type: String,

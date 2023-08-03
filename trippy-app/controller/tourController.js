@@ -31,7 +31,7 @@ const createTour = async (req, res) => {
       newTour.images = images;
       await newTour.save();
     }
-    const tour = await Tour.findById(newHotel._id);
+    const tour = await Tour.findById(newTour._id);
     res.status(200).json({
       success: true,
       tour,
@@ -156,10 +156,131 @@ const deleteTourById = async (req, res) => {
   }
 };
 
+const tourRating = async (req, res) => {
+  const { _id } = req.user;
+  const { star, comment } = req.body;
+  const { tourId } = req.params;
+  console.log(req.body);
+  try {
+    const tour = await Tour.findById(tourId);
+    let alreadyRated = tour.ratings.find(
+      (obj) => obj.postedBy?.toString() === _id.toString()
+    );
+
+    if (alreadyRated) {
+      // Update existing rating
+      await Tour.updateOne(
+        {
+          _id: tourId,
+          ratings: {
+            $elemMatch: alreadyRated,
+          },
+        },
+        {
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
+        },
+        { new: true }
+      );
+    } else {
+      // Add new rating
+      await Tour.findByIdAndUpdate(
+        tourId,
+        {
+          $push: {
+            ratings: {
+              star: star,
+              comment: comment,
+              postedBy: _id,
+            },
+          },
+        },
+        { new: true }
+      );
+    }
+
+    // Calculate the average star rating
+    const ratedtour = await Tour.findById(tourId);
+    let totalRatings = ratedtour.ratings.length;
+    let sumOfStars = ratedtour.ratings
+      .map((rating) => rating.star)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    let starRating = 0; // Default value for starRating
+
+    // Avoid division by zero
+    if (totalRatings > 0) {
+      starRating = Math.round(sumOfStars / totalRatings);
+    }
+
+    const finalUpdate = await Tour.findByIdAndUpdate(
+      tourId,
+      {
+        starRating,
+      },
+      { new: true }
+    ).populate("ratings.postedBy", ["firstName", "lastName"]);
+
+    res.status(200).json(finalUpdate);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const deleteTourRating = async (req, res) => {
+  const { _id } = req.user;
+  const { tourId } = req.params;
+  try {
+    const tour = await Tour.findById(tourId);
+    let alreadyRated = tour.ratings.find(
+      (obj) => obj.postedBy.toString() === _id.toString()
+    );
+    if (alreadyRated) {
+      const updatedtour = await Tour.findByIdAndUpdate(
+        tourId,
+        {
+          $pull: {
+            ratings: {
+              postedBy: _id,
+            },
+          },
+        },
+        { new: true }
+      );
+      // Recalculate the star rating after removing the rating
+      let totalRatings = updatedtour.ratings.length;
+      let sumOfStars = updatedtour.ratings
+        .map((rating) => rating.star)
+        .reduce((prev, curr) => prev + curr, 0);
+      starRating = totalRatings > 0 ? Math.round(sumOfStars / totalRatings) : 0;
+      console.log(starRating);
+      const finalupdatedtour = await Tour.findByIdAndUpdate(
+        tourId,
+        {
+          starRating,
+        },
+        { new: true }
+      ).populate("ratings.postedBy", ["firstName", "lastName"]);
+      res.status(200).json(finalupdatedtour);
+    } else {
+      res.status(404).json({
+        message: "Rating not found for this tour and user.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createTour,
   searchTours,
   findTourById,
   updateTourById,
   deleteTourById,
+  tourRating,
+  deleteTourRating,
 };

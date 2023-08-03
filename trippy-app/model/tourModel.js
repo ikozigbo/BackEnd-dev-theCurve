@@ -5,14 +5,17 @@ const tourSchema = new mongoose.Schema(
     tourName: {
       type: String,
       required: [true, "tour name is required."],
+      lowercase: true,
     },
     city: {
       type: String,
       required: [true, "city is required."],
+      lowercase: true,
     },
     country: {
       type: String,
       required: [true, "country is required."],
+      lowercase: true,
     },
     info: {
       type: String,
