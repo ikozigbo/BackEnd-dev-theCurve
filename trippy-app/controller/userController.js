@@ -81,14 +81,12 @@ const resendEmailVerification = async (req, res) => {
     if (user && !user.isVerified) {
       const token = await genToken(user._id, "30m");
       const subject = "New User";
-      const link = `${req.protocol}://${req.get(
-        "host"
-      )}/trippy/verify/${token}`;
-      const message = `welcome onboard kindly use this ${link} to verify your account`;
+      const link = `http://localhost:5173/verify?token=${token}`;
+      const html = await generateDynamicEmail(link);
       const data = {
         email: email,
         subject,
-        message,
+        html,
       };
       sendEmail(data);
       res.status(200).json({
@@ -128,14 +126,12 @@ const signin = async (req, res) => {
     } else if (!user.isVerified) {
       const token = await genToken(user._id, "30m");
       const subject = "verify now";
-      const link = `${req.protocol}://${req.get(
-        "host"
-      )}/trippy/verify/${token}`;
-      const message = ` kindly use this ${link} to verify your account`;
+      const link = `http://localhost:5173/verify?token=${token}`;
+      const html = await generateDynamicEmail(link);
       const data = {
         email: email,
         subject,
-        message,
+        html,
       };
       sendEmail(data);
       res.status(401).json({
@@ -180,26 +176,21 @@ const getOne = async (req, res) => {
 
 const updateUserName = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user;
     const { firstName, lastName } = req.body;
-    const user = await User.findById(userId);
+    const user = await User.findById(_id);
     console.log(req.user._id.toString());
     console.log(user.id);
     if (!user) {
       res.status(404).json({ message: "no user found" });
-    } else if (req.user._id.toString() == userId || req.user.isAdmin) {
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { firstName, lastName },
-        { new: true }
-      );
-
-      res.status(200).json({ message: "user name updated", updatedUser });
-    } else {
-      res
-        .status(401)
-        .json({ messgae: "you are not authorized to update this user" });
     }
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      { firstName, lastName },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "user name updated", updatedUser });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -258,11 +249,11 @@ const addProfilePicture = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user;
 
-    const user = await User.findById(userId);
-    console.log(req.user._id.toString());
-    console.log(user.id);
+    const user = await User.findById(_id);
+   // console.log(req.user._id.toString());
+   // console.log(user.id);
     if (!user) {
       res.status(404).json({ message: "no user found" });
     } else if (req.user._id.toString() == userId || req.user.isAdmin) {
