@@ -208,7 +208,7 @@ const addProfilePicture = async (req, res) => {
 
       let result = null;
       // Delete the existing image from local upload folder and Cloudinary
-      if (req.files) {
+      if (req.files.profilePicture.tempFilePath) {
         if (profile.profilePicture) {
           const publicId = profile.profilePicture
             .split("/")
@@ -252,8 +252,8 @@ const deleteUser = async (req, res) => {
     const { _id } = req.user;
 
     const user = await User.findById(_id);
-   // console.log(req.user._id.toString());
-   // console.log(user.id);
+    // console.log(req.user._id.toString());
+    // console.log(user.id);
     if (!user) {
       res.status(404).json({ message: "no user found" });
     } else if (req.user._id.toString() == userId || req.user.isAdmin) {
