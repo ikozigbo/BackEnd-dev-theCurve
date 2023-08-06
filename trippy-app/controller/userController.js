@@ -6,6 +6,7 @@ const { sendEmail } = require("../middlewares/sendEmail");
 const { genToken, decodeToken } = require("../utilities/jwt");
 const fs = require("fs");
 const { generateDynamicEmail } = require("../utilities/emailTemplate");
+const { generatePasswordEmail } = require("../utilities/forgotPasswordEmail");
 
 const newUser = async (req, res) => {
   try {
@@ -29,7 +30,7 @@ const newUser = async (req, res) => {
         const subject = "New User";
         const link = `http://localhost:5173/verify?token=${token}`;
         // const message = `welcome onboard kindly use this ${link} to verify your account`;
-        const html = await generateDynamicEmail(link);
+        const html = await generateDynamicEmail(link, user.firstName);
         const data = {
           email: email,
           subject,
@@ -82,7 +83,7 @@ const resendEmailVerification = async (req, res) => {
       const token = await genToken(user._id, "30m");
       const subject = "New User";
       const link = `http://localhost:5173/verify?token=${token}`;
-      const html = await generateDynamicEmail(link);
+      const html = await generateDynamicEmail(link, user.firstName);
       const data = {
         email: email,
         subject,
@@ -127,7 +128,7 @@ const signin = async (req, res) => {
       const token = await genToken(user._id, "30m");
       const subject = "verify now";
       const link = `http://localhost:5173/verify?token=${token}`;
-      const html = await generateDynamicEmail(link);
+      const html = await generateDynamicEmail(link, user.firstName);
       const data = {
         email: email,
         subject,
@@ -257,7 +258,7 @@ const deleteUser = async (req, res) => {
     if (!user) {
       res.status(404).json({ message: "no user found" });
     } else if (req.user._id.toString() == userId || req.user.isAdmin) {
-      const deletedUser = await User.findByIdAndDelete(userId);
+      const deletedUser = await User.findByIdAndDelete(_id);
       res.status(200).json({ message: "user deleted", deletedUser });
     } else {
       res
@@ -274,20 +275,19 @@ const deleteUser = async (req, res) => {
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log(req.body);
     //create a link with the reset password link and send it to email
     const user = await User.findOne({ email });
     if (user) {
       const subject = "forgotten password";
       const token = await genToken(user._id, "30m");
       // for better security practice a unique token should be sent to reset password instead of user._id
-      const link = `${req.protocol}://${req.get(
-        "host"
-      )}/trippy/reset-password/${token}`;
-      const message = `click the ${link} to reset your password`;
+      const link = `http://localhost:5173/reset-password?token=${token}`;
+      const html = await generatePasswordEmail(link, user.firstName);
       const data = {
         email: email,
         subject,
-        message,
+        html,
       };
       sendEmail(data);
       res.status(200).json({

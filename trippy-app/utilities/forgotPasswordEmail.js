@@ -1,7 +1,7 @@
 // emailTemplates.js
 
 // This function generates the email template with a dynamic link
-function generateDynamicEmail(link, firstName) {
+function generatePasswordEmail(link, firstName) {
   return `
   <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +34,7 @@ function generateDynamicEmail(link, firstName) {
 	      </tr><!-- end tr -->
 	      <tr>
           <td valign="middle" style="padding: 3em 0 2em 0;">
-            <img src="images/email.png" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
+            <img src="utilities/images/email.png" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
           </td>
 	      </tr><!-- end tr -->
 				<tr>
@@ -43,9 +43,9 @@ function generateDynamicEmail(link, firstName) {
             	<tr>
             		<td>
             			<div style="padding: 0 2.5em; text-align: center;">
-            				<h2 style="font-family: 'Lato', sans-serif; color: rgba(0,0,0,.3); font-size: 40px; margin-bottom: 0; font-weight: 400;">Please verify your email</h2>
-            				<h3 style="font-family: 'Lato', sans-serif; font-size: 24px; font-weight: 300;">Welcome On Board Trippy,${firstName},<br/> Travel with Bliss</h3>
-            				<p><a href=${link} class="btn btn-primary" style="padding: 10px 15px; display: inline-block; border-radius: 5px; background: #30e3ca; color: #ffffff; text-decoration: none;">Verify</a></p>
+            				<h2 style="font-family: 'Lato', sans-serif; color: rgba(0,0,0,.3); font-size: 40px; margin-bottom: 0; font-weight: 400;">Reset password</h2>
+            				<h3 style="font-family: 'Lato', sans-serif; font-size: 24px; font-weight: 300;">Hello ${firstName}<br/>Click the button to reset password</h3>
+            				<p><a href=${link} class="btn btn-primary" style="padding: 10px 15px; display: inline-block; border-radius: 5px; background: #30e3ca; color: #ffffff; text-decoration: none;">Reset Password</a></p>
             			</div>
             		</td>
             	</tr>
@@ -117,5 +117,5 @@ function generateDynamicEmail(link, firstName) {
 }
 
 module.exports = {
-  generateDynamicEmail,
+  generatePasswordEmail,
 };
